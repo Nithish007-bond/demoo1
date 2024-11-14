@@ -1,0 +1,35 @@
+on:
+  workflow_call:
+    inputs:
+      Env_name:
+        required: true
+        type: string
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Check selected environment
+        run: echo "Selected environment:${{ inputs.Env_name }}"
+
+      - name: Set up Deployment for nonprod
+        if: ${{ inputs.Env_name == 'nonprod' }}
+        run: |
+          echo "Deploying to nonprod environment"
+          cat tenants/demo/nonprod/configs.yml  # Ensure the path and file name are correct
+          # message=$(yq eval '.message' tenants/demo/nonprod/configs.yml)  # Optional: If you want to extract specific info from the config
+          # echo "Message from nonprod config: $message"
+          # Add your nonprod deployment commands here
+
+      - name: Set up Deployment for prod
+        if: ${{ inputs.Env_name == 'prod' }}
+        run: |
+          echo "Deploying to prod environment"
+          message=$(yq eval '.message' tenants/demo/prod/config.yml)  # Ensure the path and file name are correct
+          echo "Message from prod config: $message"
+          # Add your prod deployment commands here
