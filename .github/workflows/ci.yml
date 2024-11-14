@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  call-deployment-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call deployment workflow for nonprod
+        uses: ./.github/workflows/main.yml
+        with:
+          Env_name: 'nonprod'
+
+      - name: Call deployment workflow for prod
+        uses: ./.github/workflows/main.yml
+        with:
+          Env_name: 'prod'
